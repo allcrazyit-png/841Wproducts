@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>841W 產品規格電子手冊</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+            background-color: #f8fafc;
+        }
+        .field-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+            font-weight: 700;
+        }
+        .field-value {
+            font-size: 1.05rem;
+            color: #1e293b;
+            font-weight: 500;
+            min-height: 1.6rem;
+        }
+        .qc-alert-box {
+            border-left: 5px solid #ef4444;
+            background-color: #fef2f2;
+        }
+        .img-placeholder {
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 16px 16px;
+        }
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364748b' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 1.2em 1.2em;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+    <div class="max-w-5xl mx-auto">
+        <!-- 頂部導航與選單 -->
+        <div class="bg-white rounded-3xl shadow-xl p-6 mb-8 border border-gray-100 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center space-x-4">
+                <div class="bg-blue-600 p-3 rounded-2xl text-white shadow-lg shadow-blue-200">
+                    <i class="fas fa-industry fa-lg"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black text-slate-800 tracking-tight">841W 規格檢視系統</h1>
+                    <p class="text-slate-500 text-xs font-bold uppercase tracking-widest mt-0.5">Production Specification Manual</p>
+                </div>
+            </div>
+            
+            <div class="w-full md:w-96">
+                <label for="productSelect" class="block text-xs font-black text-slate-500 mb-2 ml-1 uppercase">快速選取品番 (Part No.)</label>
+                <select id="productSelect" onchange="loadProduct(this.value)" 
+                    class="block w-full bg-slate-50 border-2 border-slate-100 text-slate-900 text-lg rounded-2xl focus:ring-blue-500 focus:border-blue-500 p-4 shadow-sm transition-all cursor-pointer">
+                    <!-- 選項將由 JS 自動生成 -->
+                </select>
+            </div>
+        </div>
+
+        <!-- 產品詳細內容區 -->
+        <div id="productDetail" class="space-y-8">
+            <!-- JS 將在此注入內容 -->
+        </div>
+
+        <!-- 頁尾 -->
+        <div class="mt-16 pb-10 text-center">
+            <p class="text-slate-400 text-[10px] font-bold tracking-widest uppercase mb-2">Internal Use Only</p>
+            <div class="h-1 w-12 bg-slate-200 mx-auto rounded-full"></div>
+        </div>
+    </div>
+
+    <script>
+        // 設定圖片與 PDF 的基礎路徑 (GitHub Pages)
+        const basePath = "./"; 
+
+        const products = [
+            { id: 1, car: "841W", partNo: "G92D1-VU010", name: "DUCT, HV BATTERY INTAKE", img: "G92D1-VU010_main.jpg", client: "建上/國瑞", mold: "源達", machine: "550T (501機)", ct: "52秒", weight: "93g±6g", material: "FTP20DY-202B", process: "無", assembleTime: "無", qc1: "五處嵌合點需用蠟筆點檢", qc2: "末端缺料處", qc3: "需手動定位後啟動自動壓合", history: "無", container: "T62", capacity: "10", demand: "4166", pdf1: "G92D1-VU010_qc1.pdf", pdf2: "G92D1-VU010_qc2.pdf", pdf3: "G92D1-VU010_qc3.pdf" },
+            { id: 2, car: "841W", partNo: "62511-VU010", name: "右 DECK (後右側背板)", img: "62511-vu010_main.jpg", client: "建上/國瑞", mold: "源達", machine: "3200T (321機)", ct: "80", weight: "2430g±50g", material: "FTP20DY-202B", process: "無", assembleTime: "", qc1: "大型件禁止表面發白、皮紋拉傷", qc2: "", qc3: "", history: "", container: "", capacity: "7", demand: "4166", pdf1: "62511-VU010_qc1.pdf", pdf2: "62511-VU010_qc2.pdf", pdf3: "62511-VU010_qc3.pdf" },
+            { id: 3, car: "841W", partNo: "62512-VU010", name: "左 DECK (後左側背板)", img: "62512-vu010_main.jpg", client: "建上/國瑞", mold: "源達", machine: "3200T (321機)", ct: "80", weight: "2480g±50g", material: "FTP20DY-202B", process: "無", assembleTime: "", qc1: "大型件禁止表面發白、皮紋拉傷", qc2: "", qc3: "", history: "", container: "", capacity: "7", demand: "4166", pdf1: "62512-VU010_qc1.pdf", pdf2: "62512-VU010_qc2.pdf", pdf3: "62512-VU010_qc3.pdf" },
+            { id: 4, car: "841W", partNo: "67750-VU010", name: "尾門飾板", img: "67750-vu010_main.jpg", client: "建上/國瑞", mold: "博盛頓", machine: "2700T (312機)", ct: "60", weight: "2040g±45g", material: "CN-BP7SYTW", process: "有", assembleTime: "", qc1: "確認4 處熔接點無脫落", qc2: "", qc3: "", history: "", container: "", capacity: "8", demand: "4166", pdf1: "67750-VU010_qc1.pdf", pdf2: "67750-VU010_qc2.pdf", pdf3: "67750-VU010_qc3.pdf" },
+            { id: 5, car: "841W", partNo: "67761-VU010", name: "", img: "67761-VU010_main.jpg", client: "", mold: "", machine: "", ct: "", weight: "", material: "", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history: "", container: "", capacity: "", demand: "4166", pdf1: "67761-VU010_qc1.pdf", pdf2: "67761-VU010_qc2.pdf", pdf3: "67761-VU010_qc3.pdf" },
+            { id: 6, car: "841W", partNo: "69321-VU010", name: "", img: "69321-VU010_main.jpg", client: "", mold: "", machine: "", ct: "", weight: "", material: "", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history: "", container: "", capacity: "", demand: "4166", pdf1: "69321-VU010_qc1.pdf", pdf2: "69321-VU010_qc2.pdf", pdf3: "69321-VU010_qc3.pdf" },
+            { id: 7, car: "841W", partNo: "81218-X1C00", name: "", img: "81218-X1C00_main.jpg", client: "", mold: "", machine: "", ct: "", weight: "", material: "", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history: "", container: "", capacity: "", demand: "4166", pdf1: "81218-X1C00_qc1.pdf", pdf2: "81218-X1C00_qc2.pdf", pdf3: "81218-X1C00_qc3.pdf" },
+            { id: 8, car: "841W", partNo: "55303-VU010", name: "IP下段", img: "55303-VU010_main.jpg", client: "建上/國瑞", mold: "巨達", machine: "2700T (312機)", ct: "", weight: "1780g±40g", material: "APIP5G-202B", process: "無", assembleTime: "", qc1: "", qc2: "", qc3: "", history: "", container: "", capacity: "3", demand: "4166", pdf1: "55303-VU010_qc1.pdf", pdf2: "55303-VU010_qc2.pdf", pdf3: "55303-VU010_qc3.pdf" },
+            { id: 9, car: "841W", partNo: "55514-VU010", name: "安全氣囊", img: "55514-VU010_main.jpg", client: "建上/國瑞", mold: "祐振", machine: "450T (502機)", ct: "", weight: "339g±3g", material: "TT935N1J", process: "無", assembleTime: "", qc1: "", qc2: "", qc3: "", history: "", container: "", capacity: "6", demand: "4166", pdf1: "55514-VU010_qc1.pdf", pdf2: "55514-VU010_qc2.pdf", pdf3: "55514-VU010_qc3.pdf" },
+            { id: 10, car: "841W", partNo: "62225/26-VU010", name: "A柱下飾板右(左)", img: "62225(6)-VU010_main.jpg", client: "建上/國瑞", mold: "和成", machine: "550T (501機)", ct: "", weight: "130g±8g", material: "APIP5G-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history: "", container: "", capacity: "", demand: "4166", pdf1: "62225(6)-VU010_qc1.pdf", pdf2: "62225(6)-VU010_qc2.pdf", pdf3: "62225(6)-VU010_qc3.pdf" },
+            { id: 11, car: "841W", partNo: "62410/20-VU010", name: "B柱上飾板右(左)", img: "62410(20)-VU010_main.jpg", client: "建上/國瑞", mold: "祥興", machine: "800T (102機)", ct: "", weight: "283g±16g", material: "APIP5G-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history: "", container: "", capacity: "", demand: "4166", pdf1: "62410(20)-VU010_qc1.pdf", pdf2: "62410(20)-VU010_qc2.pdf", pdf3: "62410(20)-VU010_qc3.pdf" },
+            { id: 12, car: "841W", partNo: "624511/12-VU010", name: "天井側邊飾板右(左)", img: "62451(2)-VU010_main.jpg", client: "建上/國瑞", mold: "岡峰", machine: "550T (501機)", ct: "", weight: "154g±6g", material: "CN-BP1TW-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history: "", container: "", capacity: "7", demand: "4166", pdf1: "62451(2)-VU010_qc1.pdf", pdf2: "62451(2)-VU010_qc2.pdf", pdf3: "62451(2)-VU010_qc3.pdf" },
+            { id: 13, car: "841W", partNo: "67917/18-VU010", name: "", img: "67917(8)-VU010_main.jpg", client: "建上/國瑞", mold: "富項", machine: "800T (102機)", ct: "", weight: "655g±10g", material: "FTP20DY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history: "", container: "", capacity: "", demand: "4166", pdf1: "67917(8)-VU010_qc1.pdf", pdf2: "67917(8)-VU010_qc2.pdf", pdf3: "67917(8)-VU010_qc3.pdf" },
+            { id: 14, car: "841W", partNo: "71139-VU010", name: "", img: "71139-VU010_main.jpg", client: "建上/新三興", mold: "嘉泰", machine: "600T (機)", ct: "", weight: "548g±10g", material: "FTP20DY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history: "", container: "", capacity: "6", demand: "4166", pdf1: "71139-VU010_qc1.pdf", pdf2: "71139-VU010_qc2.pdf", pdf3: "71139-VU010_qc3.pdf" },
+            { id: 15, car: "841W", partNo: "71149-VU010", name: "", img: "71149-VU010_main.jpg", client: "建上/新三興", mold: "嘉泰", machine: "600T (機)", ct: "", weight: "626g±15g", material: "FTP20DY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history: "", container: "", capacity: "6", demand: "4166", pdf1: "71149-VU010_qc1.pdf", pdf2: "71149-VU010_qc2.pdf", pdf3: "71149-VU010_qc3.pdf" },
+            { id: 16, car: "841W", partNo: "71861/62-VU010", name: "仰臥器外蓋", img: "71861(2)-VU010_main.jpg", client: "建上/新三興", mold: "源達", machine: "800T (102機)", ct: "", weight: "RH:310g±6g / LH:345g±6g", material: "FTP20PDY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history: "", container: "", capacity: "5", demand: "4166", pdf1: "71861(2)-VU010_qc1.pdf", pdf2: "71861(2)-VU010_qc2.pdf", pdf3: "71861(2)-VU010_qc3.pdf" },
+            { id: 17, car: "841W", partNo: "76871-VU010", name: "尾翼上蓋", img: "76871-VU010_main.jpg", client: "建上/國瑞", mold: "博盛頓", machine: "2200T (221機)", ct: "", weight: "1190g±10g", material: "PX18-X02", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history: "", container: "", capacity: "", demand: "4166", pdf1: "76871-VU010_qc1.pdf", pdf2: "76871-VU010_qc2.pdf", pdf3: "76871-VU010_qc3.pdf" },
+            { id: 18, car: "841W", partNo: "76876-VU010", name: "尾翼下蓋", img: "76876-VU010_main.jpg", client: "建上/國瑞", mold: "博盛頓", machine: "1500T (152機)", ct: "", weight: "1310g±10g", material: "TA42C-X01", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history: "", container: "", capacity: "", demand: "4166", pdf1: "76876-VU010_qc1.pdf", pdf2: "76876-VU010_qc2.pdf", pdf3: "76876-VU010_qc3.pdf" },
+            { id: 19, car: "841W", partNo: "76911/12-VU010", name: "", img: "76911(2)-VU010_main.jpg", client: "建上/國瑞", mold: "", machine: "", ct: "", weight: "", material: "", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history: "", container: "", capacity: "", demand: "4166", pdf1: "76911(2)-VU010_qc1.pdf", pdf2: "76911(2)-VU010_qc2.pdf", pdf3: "76911(2)-VU010_qc3.pdf" },
+            { id: 20, car: "841W", partNo: "76917/18-VU010", name: "", img: "76917(8)-VU010_main.jpg", client: "建上/國瑞", mold: "", machine: "", ct: "", weight: "", material: "", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history: "", container: "", capacity: "", demand: "4166", pdf1: "76917(8)-VU010_qc1.pdf", pdf2: "76917(8)-VU010_qc2.pdf", pdf3: "76917(8)-VU010_qc3.pdf" },
+            { id: 21, car: "841W", partNo: "79236/46-VU010", name: "", img: "79236(46)-VU020(010)_main.jpg", client: "建上/新三興", mold: "源達", machine: "800T (102機)", ct: "", weight: "202g±5g", material: "FTP20DY", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history: "", container: "", capacity: "6", demand: "4166", pdf1: "79236(46)-VU020(010)_qc1.pdf", pdf2: "79236(46)-VU020(010)_qc2.pdf", pdf3: "79236(46)-VU020(010)_qc3.pdf" },
+        ];
+
+        function init() {
+            const select = document.getElementById('productSelect');
+            products.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.id;
+                opt.text = p.partNo + (p.name ? ` - ${p.name}` : "");
+                select.appendChild(opt);
+            });
+            loadProduct(products[0].id);
+        }
+
+        function loadProduct(id) {
+            const p = products.find(x => x.id == id);
+            const container = document.getElementById('productDetail');
+            
+            container.innerHTML = `
+                <!-- 第一區塊：基本與圖片 -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 bg-white rounded-3xl shadow-lg p-8 border-t-8 border-blue-600">
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+                            <h2 class="text-xl font-black text-slate-800 tracking-tight">基本資料</h2>
+                            <span class="px-3 py-1 bg-slate-100 text-slate-500 rounded-lg text-xs font-black uppercase tracking-widest">${p.car}</span>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-8 gap-x-6">
+                            <div>
+                                <div class="field-label">品番 / Part No.</div>
+                                <div class="field-value text-3xl font-black text-blue-600 tracking-tighter">${p.partNo}</div>
+                            </div>
+                            <div>
+                                <div class="field-label">主要客戶 / Client</div>
+                                <div class="field-value">${p.client || '-'}</div>
+                            </div>
+                            <div class="sm:col-span-2">
+                                <div class="field-label">零件品名 / Part Name</div>
+                                <div class="field-value text-xl font-bold text-slate-700">${p.name || '<span class="text-slate-300 italic">未標註</span>'}</div>
+                            </div>
+                            <div>
+                                <div class="field-label">模具廠商</div>
+                                <div class="field-value">${p.mold || '-'}</div>
+                            </div>
+                            <div>
+                                <div class="field-label">原料材質 / Material</div>
+                                <div class="field-value font-mono text-sm">${p.material || '-'}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl shadow-lg p-8 flex flex-col items-center">
+                         <div class="field-label w-full mb-4">產品外觀預覽</div>
+                         <div class="w-full h-56 img-placeholder bg-slate-50 rounded-2xl flex items-center justify-center overflow-hidden mb-4 border-2 border-slate-50 relative group">
+                             <img src="${basePath}${p.img}" alt="${p.partNo}" class="w-full h-full object-contain transition duration-500 group-hover:scale-110" 
+                                  onerror="this.onerror=null; this.parentElement.innerHTML='<div class=\\'text-slate-300 text-center p-4\\'><i class=\\'far fa-image fa-3x mb-3\\'></i><br><span class=\\'text-[10px] font-bold uppercase\\'>圖片未上傳<br>${p.img}</span></div>'">
+                         </div>
+                         <div class="flex flex-col items-center gap-2">
+                             <a href="${basePath}${p.img}" target="_blank" class="text-blue-600 hover:text-blue-800 text-xs font-black transition-all flex items-center bg-blue-50 px-4 py-2 rounded-full">
+                                <i class="fas fa-expand-arrows-alt mr-2"></i> 開啟原始圖檔
+                             </a>
+                             <span class="text-[9px] text-slate-400 font-mono tracking-tighter">FILENAME: ${p.img}</span>
+                         </div>
+                    </div>
+                </div>
+
+                <!-- 第二區塊：生產參數 -->
+                <div class="bg-white rounded-3xl shadow-lg p-8 border-t-8 border-emerald-500">
+                    <h2 class="text-xl font-black text-slate-800 border-b border-slate-100 pb-4 mb-6">生產製造規格 (Manufacturing)</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
+                        <div>
+                            <div class="field-label">建議生產機台</div>
+                            <div class="field-value font-black text-emerald-700">${p.machine || '-'}</div>
+                        </div>
+                        <div>
+                            <div class="field-label">標準 CT 時間</div>
+                            <div class="field-value font-mono font-bold">${p.ct || '-'}</div>
+                        </div>
+                        <div>
+                            <div class="field-label">產品重量規格</div>
+                            <div class="field-value font-black text-orange-500">${p.weight || '-'}</div>
+                        </div>
+                        <div>
+                            <div class="field-label">後加工 / 組立時間</div>
+                            <div class="field-value">${p.process || '-'}${p.assembleTime ? ' / ' + p.assembleTime : ''}</div>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-2xl border-2 border-slate-100 col-span-2">
+                            <div class="field-label text-slate-500">出貨容器 / 收容數 (Container / Capacity)</div>
+                            <div class="field-value text-2xl font-black text-slate-800">${p.container || '-'}${p.capacity ? ' / <span class="text-blue-600">' + p.capacity + ' PCS</span>' : ''}</div>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-2xl border-2 border-blue-100 col-span-2">
+                            <div class="field-label text-blue-500 font-black">月預估需求量 (Monthly Demand)</div>
+                            <div class="field-value text-2xl font-black text-blue-700 tracking-tighter">${p.demand} <span class="text-xs font-bold text-blue-400">PCS/MONTH</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第三區塊：品質管制 -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-3xl shadow-lg p-8 border-t-8 border-red-500">
+                        <h2 class="text-xl font-black text-slate-800 border-b border-slate-100 pb-4 mb-6 flex items-center">
+                            <i class="fas fa-exclamation-triangle text-red-500 mr-3"></i> 重點管制項目 (QC Points)
+                        </h2>
+                        <div class="space-y-4">
+                            ${p.qc1 ? `<div class="qc-alert-box p-4 rounded-r-xl shadow-sm"><div class="field-label text-red-800">POINT 01</div><div class="text-slate-800 font-black leading-snug">${p.qc1}</div></div>` : ''}
+                            ${p.qc2 ? `<div class="qc-alert-box p-4 rounded-r-xl shadow-sm"><div class="field-label text-red-800">POINT 02</div><div class="text-slate-800 font-black leading-snug">${p.qc2}</div></div>` : ''}
+                            ${p.qc3 ? `<div class="qc-alert-box p-4 rounded-r-xl shadow-sm"><div class="field-label text-red-800">POINT 03</div><div class="text-slate-800 font-black leading-snug">${p.qc3}</div></div>` : ''}
+                            ${(!p.qc1 && !p.qc2 && !p.qc3) ? '<div class="text-slate-400 italic py-6 text-center text-sm font-bold">目前暫無特定管制項目</div>' : ''}
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl shadow-lg p-8 border-t-8 border-slate-300">
+                        <h2 class="text-xl font-black text-slate-800 border-b border-slate-100 pb-4 mb-6 flex items-center">
+                            <i class="fas fa-history text-slate-400 mr-3"></i> 歷史異常與紀錄
+                        </h2>
+                        <div class="bg-slate-50 p-6 rounded-2xl border-2 border-slate-100 min-h-[14rem] flex flex-col justify-center text-center">
+                            <div class="text-slate-600 font-bold leading-relaxed">
+                                ${p.history || '<span class="text-slate-300 italic">目前無異常回溯存檔</span>'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 第四區塊：PDF 下載 -->
+                <div class="bg-slate-900 rounded-[2.5rem] shadow-2xl p-10 text-white border border-slate-800">
+                    <div class="flex flex-col md:flex-row items-center justify-between mb-10 gap-4 text-center md:text-left">
+                        <div>
+                            <h2 class="text-2xl font-black tracking-tight flex items-center justify-center md:justify-start">
+                                <i class="fas fa-file-pdf mr-3 text-red-500"></i> 生產品質標準文件
+                            </h2>
+                            <p class="text-slate-500 text-[10px] font-black uppercase tracking-tighter mt-1">Controlled Documents Vault</p>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- QC1 -->
+                        <div class="flex flex-col">
+                            <a href="${basePath}${p.pdf1}" target="_blank" class="flex flex-col p-6 bg-slate-800 border-2 border-slate-700 rounded-3xl hover:border-red-600 hover:bg-slate-750 transition-all shadow-xl group">
+                                <div class="flex justify-between items-center mb-4">
+                                    <div class="h-10 w-10 bg-red-900/40 rounded-xl flex items-center justify-center text-red-500 font-black text-xs">QC1</div>
+                                    <i class="fas fa-download text-slate-600 group-hover:text-red-500 transition-colors"></i>
+                                </div>
+                                <span class="text-lg font-black mb-1">成形條件表</span>
+                                <span class="text-[9px] text-slate-500 truncate font-mono uppercase tracking-tighter">${p.pdf1}</span>
+                            </a>
+                        </div>
+                        <!-- QC2 -->
+                        <div class="flex flex-col">
+                            <a href="${basePath}${p.pdf2}" target="_blank" class="flex flex-col p-6 bg-slate-800 border-2 border-slate-700 rounded-3xl hover:border-blue-600 hover:bg-slate-750 transition-all shadow-xl group">
+                                <div class="flex justify-between items-center mb-4">
+                                    <div class="h-10 w-10 bg-blue-900/40 rounded-xl flex items-center justify-center text-blue-500 font-black text-xs">QC2</div>
+                                    <i class="fas fa-download text-slate-600 group-hover:text-blue-500 transition-colors"></i>
+                                </div>
+                                <span class="text-lg font-black mb-1">作業標準書</span>
+                                <span class="text-[9px] text-slate-500 truncate font-mono uppercase tracking-tighter">${p.pdf2}</span>
+                            </a>
+                        </div>
+                        <!-- QC3 -->
+                        <div class="flex flex-col">
+                            <a href="${basePath}${p.pdf3}" target="_blank" class="flex flex-col p-6 bg-slate-800 border-2 border-slate-700 rounded-3xl hover:border-emerald-600 hover:bg-slate-750 transition-all shadow-xl group">
+                                <div class="flex justify-between items-center mb-4">
+                                    <div class="h-10 w-10 bg-emerald-900/40 rounded-xl flex items-center justify-center text-emerald-500 font-black text-xs">QC3</div>
+                                    <i class="fas fa-download text-slate-600 group-hover:text-emerald-500 transition-colors"></i>
+                                </div>
+                                <span class="text-lg font-black mb-1">檢查手順書</span>
+                                <span class="text-[9px] text-slate-500 truncate font-mono uppercase tracking-tighter">${p.pdf3}</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 啟動初始化
+        init();
+    </script>
+</body>
+</html>
