@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>841W 產品詳情檢視</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+            background-color: #f3f4f6;
+        }
+        .field-label {
+            font-size: 0.75rem;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+        .field-value {
+            font-size: 1rem;
+            color: #1f2937;
+            font-weight: 500;
+        }
+        .qc-box {
+            border-left: 4px solid #ef4444;
+            background-color: #fef2f2;
+        }
+        select:focus {
+            outline: none;
+            ring: 2px;
+            border-color: #3b82f6;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 min-h-screen">
+
+    <div class="max-w-5xl mx-auto">
+        <!-- Header & Navigation -->
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800"><i class="fas fa-cube mr-2 text-blue-600"></i>產品規格詳情表</h1>
+                <p class="text-sm text-gray-500 mt-1">車型專案: 841W</p>
+            </div>
+            
+            <!-- Dropdown Selector -->
+            <div class="w-full md:w-96">
+                <label for="productSelect" class="block text-sm font-medium text-gray-700 mb-1">選擇產品品番：</label>
+                <div class="relative">
+                    <select id="productSelect" onchange="loadProduct(this.value)" 
+                        class="block w-full pl-4 pr-10 py-3 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-lg border shadow-sm bg-gray-50">
+                        <!-- Options will be populated by JS -->
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                        <i class="fas fa-chevron-down text-xs"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Detail Card (Content Injection Target) -->
+        <div id="productDetail" class="space-y-6">
+            <!-- JS will inject content here -->
+        </div>
+
+        <div class="mt-8 text-xs text-gray-400 text-center">
+            資料更新時間: 2026-01-21 | 系統僅供內部使用
+        </div>
+    </div>
+
+    <!-- Data Script -->
+    <script>
+        const products = [
+            { id: 1, car: "841W", partNo: "G92D1-VU010", name: "DUCT, HV BATTERY INTAKE", img: "G92D1-VU010_main.jpg", client: "建上/國瑞", mold: "源達", machine: "550T (501機)", ct: "52秒", weight: "93g±6g", material: "FTP20DY-202B", process: "無", assembleTime: "無", qc1: "五處嵌合點需用蠟筆點檢", qc2: "末端缺料處", qc3: "需手動定位後啟動自動壓合", history1: "無", history2: "", container: "T62", capacity: "10", demand: "4166", pdf1: "G92D1-VU010_qc1.pdf", pdf2: "G92D1-VU010_qc2.pdf", pdf3: "G92D1-VU010_qc3.pdf" },
+            { id: 2, car: "841W", partNo: "62511-VU010", name: "右 DECK (後右側背板)", img: "62511-vu010_main.jpg", client: "建上/國瑞", mold: "源達", machine: "3200T (321機)", ct: "80", weight: "2430g±50g", material: "FTP20DY-202B", process: "無", assembleTime: "", qc1: "大型件禁止表面發白、皮紋拉傷", qc2: "", qc3: "", history1: "", history2: "", container: "", capacity: "7", demand: "4166", pdf1: "62511-VU010_qc1.pdf", pdf2: "62511-VU010_qc2.pdf", pdf3: "62511-VU010_qc3.pdf" },
+            { id: 3, car: "841W", partNo: "67917/18-VU010", name: "", img: "67917(8)-VU010_main.jpg", client: "建上/國瑞", mold: "富項", machine: "800T (102機)", ct: "", weight: "655g±10g", material: "FTP20DY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history1: "", history2: "", container: "", capacity: "", demand: "4166", pdf1: "67917(8)-VU010_qc1.pdf", pdf2: "67917(8)-VU010_qc2.pdf", pdf3: "67917(8)-VU010_qc3.pdf" },
+            { id: 4, car: "841W", partNo: "71139-VU010", name: "", img: "71139-VU010_main.jpg", client: "建上/新三興", mold: "嘉泰", machine: "600T (機)", ct: "", weight: "548g±10g", material: "FTP20DY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history1: "", history2: "", container: "", capacity: "6", demand: "4166", pdf1: "71139-VU010_qc1.pdf", pdf2: "71139-VU010_qc2.pdf", pdf3: "71139-VU010_qc3.pdf" },
+            { id: 5, car: "841W", partNo: "71149-VU010", name: "", img: "71149-VU010_main.jpg", client: "建上/新三興", mold: "嘉泰", machine: "600T (機)", ct: "", weight: "626g±15g", material: "FTP20DY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history1: "", history2: "", container: "", capacity: "6", demand: "4166", pdf1: "71149-VU010_qc1.pdf", pdf2: "71149-VU010_qc2.pdf", pdf3: "71149-VU010_qc3.pdf" },
+            { id: 6, car: "841W", partNo: "64745/46-VU010", name: "", img: "64745(6)-VU010_main.jpg", client: "建上/國瑞", mold: "", machine: "850T (103機)", ct: "", weight: "678g±15g", material: "FTP20DY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history1: "", history2: "", container: "", capacity: "", demand: "4166", pdf1: "64745(6)-VU010_qc1.pdf", pdf2: "64745(6)-VU010_qc2.pdf", pdf3: "64745(6)-VU010_qc3.pdf" },
+            { id: 7, car: "841W", partNo: "62612-VU010", name: "", img: "62612-VU010_main.jpg", client: "建上/國瑞", mold: "", machine: "850T (103機)", ct: "", weight: "1250g±30g", material: "FTP20DY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history1: "", history2: "", container: "", capacity: "", demand: "4166", pdf1: "62612-VU010_qc1.pdf", pdf2: "62612-VU010_qc2.pdf", pdf3: "62612-VU010_qc3.pdf" },
+            { id: 8, car: "841W", partNo: "62512-VU010", name: "", img: "62512-VU010_main.jpg", client: "建上/國瑞", mold: "", machine: "3200T (321機)", ct: "", weight: "2415g±50g", material: "FTP20DY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history1: "", history2: "", container: "", capacity: "", demand: "4166", pdf1: "62512-VU010_qc1.pdf", pdf2: "62512-VU010_qc2.pdf", pdf3: "62512-VU010_qc3.pdf" },
+            { id: 9, car: "841W", partNo: "58577/78-VU010", name: "", img: "58577(8)-VU010_main.jpg", client: "建上/國瑞", mold: "", machine: "850T (103機)", ct: "", weight: "425g±10g", material: "FTP20DY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history1: "", history2: "", container: "", capacity: "", demand: "4166", pdf1: "58577(8)-VU010_qc1.pdf", pdf2: "58577(8)-VU010_qc2.pdf", pdf3: "58577(8)-VU010_qc3.pdf" },
+            { id: 10, car: "841W", partNo: "62611-VU010", name: "", img: "62611-VU010_main.jpg", client: "建上/國瑞", mold: "", machine: "850T (103機)", ct: "", weight: "1265g±30g", material: "FTP20DY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history1: "", history2: "", container: "", capacity: "", demand: "4166", pdf1: "62611-VU010_qc1.pdf", pdf2: "62611-VU010_qc2.pdf", pdf3: "62611-VU010_qc3.pdf" },
+            { id: 11, car: "841W", partNo: "64331/32-VU010", name: "", img: "64331(2)-VU010_main.jpg", client: "建上/國瑞", mold: "", machine: "850T (103機)", ct: "", weight: "430g±10g", material: "FTP20DY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history1: "", history2: "", container: "", capacity: "", demand: "4166", pdf1: "64331(2)-VU010_qc1.pdf", pdf2: "64331(2)-VU010_qc2.pdf", pdf3: "64331(2)-VU010_qc3.pdf" },
+            { id: 12, car: "841W", partNo: "64741/42-VU010", name: "", img: "64741(2)-VU010_main.jpg", client: "建上/國瑞", mold: "", machine: "850T (103機)", ct: "", weight: "585g±10g", material: "FTP20DY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history1: "", history2: "", container: "", capacity: "", demand: "4166", pdf1: "64741(2)-VU010_qc1.pdf", pdf2: "64741(2)-VU010_qc2.pdf", pdf3: "64741(2)-VU010_qc3.pdf" },
+            { id: 13, car: "841W", partNo: "64715/16-VU010", name: "", img: "64715(6)-VU010_main.jpg", client: "建上/國瑞", mold: "", machine: "850T (103機)", ct: "", weight: "510g±10g", material: "FTP20DY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history1: "", history2: "", container: "", capacity: "", demand: "4166", pdf1: "64715(6)-VU010_qc1.pdf", pdf2: "64715(6)-VU010_qc2.pdf", pdf3: "64715(6)-VU010_qc3.pdf" },
+            { id: 14, car: "841W", partNo: "64261/62-VU010", name: "", img: "64261(2)-VU010_main.jpg", client: "建上/國瑞", mold: "", machine: "850T (103機)", ct: "", weight: "495g±10g", material: "FTP20DY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history1: "", history2: "", container: "", capacity: "", demand: "4166", pdf1: "64261(2)-VU010_qc1.pdf", pdf2: "64261(2)-VU010_qc2.pdf", pdf3: "64261(2)-VU010_qc3.pdf" },
+            { id: 15, car: "841W", partNo: "64731/32-VU010", name: "", img: "64731(2)-VU010_main.jpg", client: "建上/國瑞", mold: "", machine: "850T (103機)", ct: "", weight: "610g±10g", material: "FTP20DY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history1: "", history2: "", container: "", capacity: "", demand: "4166", pdf1: "64731(2)-VU010_qc1.pdf", pdf2: "64731(2)-VU010_qc2.pdf", pdf3: "64731(2)-VU010_qc3.pdf" },
+            { id: 16, car: "841W", partNo: "64711/12-VU010", name: "", img: "64711(2)-VU010_main.jpg", client: "建上/國瑞", mold: "", machine: "850T (103機)", ct: "", weight: "545g±10g", material: "FTP20DY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history1: "", history2: "", container: "", capacity: "", demand: "4166", pdf1: "64711(2)-VU010_qc1.pdf", pdf2: "64711(2)-VU010_qc2.pdf", pdf3: "64711(2)-VU010_qc3.pdf" },
+            { id: 17, car: "841W", partNo: "64271/72-VU010", name: "", img: "64271(2)-VU010_main.jpg", client: "建上/國瑞", mold: "", machine: "850T (103機)", ct: "", weight: "465g±10g", material: "FTP20DY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history1: "", history2: "", container: "", capacity: "", demand: "4166", pdf1: "64271(2)-VU010_qc1.pdf", pdf2: "64271(2)-VU010_qc2.pdf", pdf3: "64271(2)-VU010_qc3.pdf" },
+            { id: 18, car: "841W", partNo: "62451/52-VU010", name: "", img: "62451(2)-VU010_main.jpg", client: "建上/國瑞", mold: "", machine: "850T (103機)", ct: "", weight: "385g±10g", material: "FTP20DY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history1: "", history2: "", container: "", capacity: "", demand: "4166", pdf1: "62451(2)-VU010_qc1.pdf", pdf2: "62451(2)-VU010_qc2.pdf", pdf3: "62451(2)-VU010_qc3.pdf" },
+            { id: 19, car: "841W", partNo: "52541/42-VU010", name: "", img: "52541(2)-VU010_main.jpg", client: "建上/國瑞", mold: "", machine: "850T (103機)", ct: "", weight: "280g±10g", material: "FTP20DY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history1: "", history2: "", container: "", capacity: "", demand: "4166", pdf1: "52541(2)-VU010_qc1.pdf", pdf2: "52541(2)-VU010_qc2.pdf", pdf3: "52541(2)-VU010_qc3.pdf" },
+            { id: 20, car: "841W", partNo: "52543/44-VU010", name: "", img: "52543(4)-VU010_main.jpg", client: "建上/國瑞", mold: "", machine: "850T (103機)", ct: "", weight: "295g±10g", material: "FTP20DY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history1: "", history2: "", container: "", capacity: "", demand: "4166", pdf1: "52543(4)-VU010_qc1.pdf", pdf2: "52543(4)-VU010_qc2.pdf", pdf3: "52543(4)-VU010_qc3.pdf" },
+            { id: 21, car: "841W", partNo: "64721/22-VU010", name: "", img: "64721(2)-VU010_main.jpg", client: "建上/國瑞", mold: "", machine: "850T (103機)", ct: "", weight: "520g±10g", material: "FTP20DY-202B", process: "", assembleTime: "", qc1: "", qc2: "", qc3: "", history1: "", history2: "", container: "", capacity: "", demand: "4166", pdf1: "64721(2)-VU010_qc1.pdf", pdf2: "64721(2)-VU010_qc2.pdf", pdf3: "64721(2)-VU010_qc3.pdf" },
+        ];
+
+        function init() {
+            const select = document.getElementById('productSelect');
+            
+            // Populate Dropdown
+            products.forEach(product => {
+                const option = document.createElement('option');
+                option.value = product.id;
+                // Format: PartNo - Name (truncated if too long)
+                let displayName = product.partNo;
+                if(product.name) displayName += ` - ${product.name}`;
+                option.text = displayName;
+                select.appendChild(option);
+            });
+
+            // Load first product
+            loadProduct(products[0].id);
+        }
+
+        function loadProduct(id) {
+            const product = products.find(p => p.id == id);
+            if (!product) return;
+
+            const container = document.getElementById('productDetail');
+            
+            // Generate HTML Content
+            container.innerHTML = `
+                <!-- Top Section: Basic Info & Image -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Basic Info -->
+                    <div class="md:col-span-2 bg-white rounded-xl shadow-sm p-6">
+                        <h2 class="text-lg font-bold text-gray-800 border-b pb-2 mb-4">基本資料</h2>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <div class="field-label">品番 (Part No)</div>
+                                <div class="field-value text-2xl text-blue-600">${product.partNo}</div>
+                            </div>
+                            <div>
+                                <div class="field-label">車型</div>
+                                <div class="field-value">${product.car}</div>
+                            </div>
+                            <div class="col-span-2">
+                                <div class="field-label">品名 (Part Name)</div>
+                                <div class="field-value">${product.name || '<span class="text-gray-400">未指定</span>'}</div>
+                            </div>
+                            <div>
+                                <div class="field-label">客戶</div>
+                                <div class="field-value">${product.client}</div>
+                            </div>
+                            <div>
+                                <div class="field-label">模具廠商</div>
+                                <div class="field-value">${product.mold || '-'}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Image Section -->
+                    <div class="bg-white rounded-xl shadow-sm p-6 flex flex-col items-center justify-center">
+                         <div class="field-label w-full text-left mb-2">產品圖片</div>
+                         ${product.img ? 
+                            `<div class="w-full h-48 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden mb-2">
+                                <span class="text-gray-400 text-sm"><i class="far fa-image fa-3x mb-2"></i><br>${product.img}</span>
+                             </div>
+                             <a href="${product.img}" target="_blank" class="text-blue-500 hover:text-blue-700 text-sm"><i class="fas fa-external-link-alt"></i> 查看原圖</a>` 
+                            : 
+                            `<div class="w-full h-48 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400">無圖片</div>`
+                         }
+                    </div>
+                </div>
+
+                <!-- Middle Section: Production Specs -->
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <h2 class="text-lg font-bold text-gray-800 border-b pb-2 mb-4">生產規格參數</h2>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                        <div>
+                            <div class="field-label">生產機台</div>
+                            <div class="field-value text-green-700">${product.machine}</div>
+                        </div>
+                        <div>
+                            <div class="field-label">CT 時間</div>
+                            <div class="field-value">${product.ct || '-'}</div>
+                        </div>
+                        <div>
+                            <div class="field-label">產品重量</div>
+                            <div class="field-value">${product.weight}</div>
+                        </div>
+                        <div>
+                            <div class="field-label">原料材質</div>
+                            <div class="field-value">${product.material}</div>
+                        </div>
+                        <div>
+                            <div class="field-label">後加工組立</div>
+                            <div class="field-value">${product.process || '-'}</div>
+                        </div>
+                        <div>
+                            <div class="field-label">組立時間</div>
+                            <div class="field-value">${product.assembleTime || '-'}</div>
+                        </div>
+                        <div>
+                            <div class="field-label">出貨容器 / 收容數</div>
+                            <div class="field-value">${product.container || '-'} / ${product.capacity || '-'}</div>
+                        </div>
+                        <div>
+                            <div class="field-label">月需求量</div>
+                            <div class="field-value text-blue-600 font-bold">${product.demand}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QC Section -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Critical QC Points -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h2 class="text-lg font-bold text-gray-800 border-b pb-2 mb-4 flex items-center">
+                            <i class="fas fa-exclamation-circle text-red-500 mr-2"></i>重點管制事項
+                        </h2>
+                        <div class="space-y-3">
+                            <div class="qc-box p-3 rounded-r">
+                                <div class="field-label text-red-800">重點管制 1</div>
+                                <div class="text-gray-800">${product.qc1 || '無特定事項'}</div>
+                            </div>
+                            <div class="qc-box p-3 rounded-r">
+                                <div class="field-label text-red-800">重點管制 2</div>
+                                <div class="text-gray-800">${product.qc2 || '無特定事項'}</div>
+                            </div>
+                            <div class="qc-box p-3 rounded-r">
+                                <div class="field-label text-red-800">重點管制 3</div>
+                                <div class="text-gray-800">${product.qc3 || '無特定事項'}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- History & Anomalies -->
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h2 class="text-lg font-bold text-gray-800 border-b pb-2 mb-4">歷史異常回溯</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="field-label">異常回溯紀錄 1</div>
+                                <div class="p-3 bg-gray-50 rounded border border-gray-100 min-h-[3rem]">
+                                    ${product.history1 || '<span class="text-gray-400">無紀錄</span>'}
+                                </div>
+                            </div>
+                            <div>
+                                <div class="field-label">異常回溯紀錄 2</div>
+                                <div class="p-3 bg-gray-50 rounded border border-gray-100 min-h-[3rem]">
+                                    ${product.history2 || '<span class="text-gray-400">無紀錄</span>'}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer: Documents -->
+                <div class="bg-gray-800 rounded-xl shadow-sm p-6 text-white">
+                    <h2 class="text-lg font-bold mb-4 flex items-center">
+                        <i class="fas fa-folder-open mr-2"></i>相關文件下載
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <a href="${product.pdf1 || '#'}" target="_blank" class="${!product.pdf1 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-700'} flex items-center justify-between p-4 bg-gray-700 rounded-lg transition-colors">
+                            <span class="font-medium">成形條件表 (QC1)</span>
+                            <i class="fas fa-file-pdf text-red-400 text-xl"></i>
+                        </a>
+                        <a href="${product.pdf2 || '#'}" target="_blank" class="${!product.pdf2 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-700'} flex items-center justify-between p-4 bg-gray-700 rounded-lg transition-colors">
+                            <span class="font-medium">作業標準書 (QC2)</span>
+                            <i class="fas fa-file-pdf text-blue-400 text-xl"></i>
+                        </a>
+                        <a href="${product.pdf3 || '#'}" target="_blank" class="${!product.pdf3 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-700'} flex items-center justify-between p-4 bg-gray-700 rounded-lg transition-colors">
+                            <span class="font-medium">檢查手順書 (QC3)</span>
+                            <i class="fas fa-file-pdf text-green-400 text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Initialize App
+        init();
+    </script>
+</body>
+</html>
