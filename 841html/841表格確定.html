@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>841W 專案：數位產品履歷中心</title>
+    <!-- 使用 Tailwind CSS 構建現代工業 UI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', 'Microsoft JhengHei', sans-serif; }
+        
+        #imageModal { transition: opacity 0.3s ease; }
+        .zoom-cursor { cursor: zoom-in; }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        
+        .raw-material-box {
+            font-size: 1.8rem;
+            line-height: 1.2;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen p-4 md:p-6 text-slate-900 text-sm">
+    <div class="max-w-7xl mx-auto">
+        <!-- 頂部標題與部品選擇器 -->
+        <header class="bg-white p-5 rounded-3xl shadow-sm border border-slate-200 mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 p-2.5 rounded-2xl text-white shadow-lg shadow-blue-200">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-black text-slate-800 tracking-tighter uppercase leading-none">841W 數位產品履歷</h1>
+                    <p class="text-slate-400 font-bold text-[10px] uppercase tracking-widest italic mt-1 text-nowrap tracking-tighter">Full Hub - 21 Official Items Integrated</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4 w-full md:w-auto">
+                <select id="partSelector" class="w-full md:w-[620px] bg-slate-50 border-2 border-slate-200 rounded-2xl px-5 py-3 font-black text-slate-700 focus:border-blue-500 outline-none transition-all shadow-sm text-sm"></select>
+            </div>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- 左側：核心身分與 OT 規格 -->
+            <div class="lg:col-span-4 space-y-6">
+                <!-- 產品照片 -->
+                <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden group border-b-4 border-b-blue-600">
+                    <div class="h-56 bg-slate-100 relative overflow-hidden border-b border-slate-50 text-center flex items-center justify-center">
+                        <img id="main-photo" src="" class="max-w-full max-h-full object-contain zoom-cursor transition-transform duration-500 group-hover:scale-105" onclick="openModal(this.src)" title="點擊放大圖">
+                        <div class="absolute top-4 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest shadow-md">841W PROJECT</div>
+                    </div>
+                    <div class="p-6 space-y-4">
+                        <div class="grid grid-cols-2 gap-4 border-b border-slate-50 pb-4">
+                            <div class="col-span-2">
+                                <span class="text-slate-400 text-[9px] font-black uppercase tracking-widest block mb-0.5 tracking-tighter">品番 (Part No.)</span>
+                                <h2 id="part-no" class="text-lg font-black text-slate-800 break-words leading-none tracking-tighter uppercase tracking-tighter">--</h2>
+                            </div>
+                            <div class="col-span-2 mt-2">
+                                <span class="text-slate-400 text-[9px] font-black uppercase tracking-widest block mb-0.5">客戶</span>
+                                <p id="customer" class="font-bold text-slate-600 text-sm">--</p>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 text-[9px] font-black uppercase tracking-widest block mb-0.5">品名 (Part Name)</span>
+                            <p id="part-name" class="font-bold text-slate-700 leading-tight">--</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 生產 OT 參數 -->
+                <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 space-y-4">
+                    <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b pb-4 flex justify-between items-center">
+                        <span>生產參數 (OT Parameters)</span>
+                        <span id="mold-maker" class="text-blue-600 italic font-bold text-[10px]">--</span>
+                    </h3>
+                    
+                    <!-- 原料區 (特大號字體) -->
+                    <div class="bg-blue-50 p-4 rounded-2xl border border-blue-100 shadow-inner text-center">
+                        <span class="text-blue-500 text-[10px] font-black uppercase tracking-widest block mb-1">使用原料型號</span>
+                        <span id="material" class="font-black text-blue-800 raw-material-box break-words block tracking-tighter uppercase">--</span>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-y-4 gap-x-3 px-1 text-nowrap">
+                        <div>
+                            <span class="text-slate-400 text-[9px] font-black block mb-0.5 uppercase tracking-wider">生產機台</span>
+                            <span id="machine" class="font-black text-slate-700">--</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 text-[9px] font-black block mb-0.5 uppercase tracking-wider">標準 CT</span>
+                            <span id="ct" class="font-mono font-black text-orange-600 text-lg">--</span>
+                        </div>
+                        <div class="col-span-2 border-t border-slate-100 pt-3 mt-1">
+                            <span class="text-slate-400 text-[9px] font-black block mb-0.5 uppercase tracking-wider text-nowrap">重量規範 (Weight Control)</span>
+                            <span id="weight" class="font-black text-blue-600 text-base">--</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右側：後加工、點檢、SOP、報表入口 -->
+            <div class="lg:col-span-8 space-y-6">
+                
+                <!-- 後加工組立區塊 -->
+                <div class="bg-emerald-50 rounded-3xl shadow-sm border border-emerald-200 p-6 border-b-4 border-b-emerald-500">
+                    <h3 class="text-emerald-800 text-xs font-black uppercase tracking-widest mb-4 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22v-7l-2-2"/><path d="M17 8l-2-2"/><path d="M19 13l-2-2"/><path d="M10 2l2 2"/><path d="M5 11l2 2"/><circle cx="12" cy="5" r="3"/></svg>
+                        後加工組立程序 (Post-Processing)
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-nowrap">
+                        <div class="bg-white/80 p-4 rounded-2xl border border-emerald-100">
+                            <span class="text-emerald-500 text-[10px] font-black uppercase block mb-1">加工項目</span>
+                            <span id="post-process" class="font-black text-emerald-900 text-xl tracking-tighter uppercase">--</span>
+                        </div>
+                        <div class="bg-white/80 p-4 rounded-2xl border border-emerald-100 text-center">
+                            <span class="text-emerald-500 text-[10px] font-black uppercase block mb-1">組立時間 / 成本秒數</span>
+                            <span id="assy-time" class="font-black text-emerald-900 text-xl tracking-tighter">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 點檢與技術庫 (分流顯示) -->
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6">
+                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2 text-red-500 font-black uppercase">
+                            現場重點管制 (Key Checks)
+                        </h3>
+                        <div id="controls-grid" class="space-y-3"></div>
+                    </div>
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6">
+                        <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2 text-blue-500 font-black uppercase">
+                            技術標準文件庫 (SOP Library)
+                        </h3>
+                        <div id="sop-grid" class="space-y-3"></div>
+                    </div>
+                </div>
+
+                <!-- 物流與回溯 -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-nowrap">
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6">
+                        <div class="grid grid-cols-3 gap-4 text-center">
+                            <div class="border-r border-slate-100"><span class="text-slate-400 text-[8px] font-black block mb-1 uppercase tracking-tighter">載具</span><span id="log-container" class="font-black text-slate-700 text-base uppercase">--</span></div>
+                            <div class="border-r border-slate-100"><span class="text-slate-400 text-[8px] font-black block mb-1 uppercase tracking-tighter">收容</span><span id="log-cap" class="font-black text-slate-700 text-base">--</span></div>
+                            <div><span class="text-slate-400 text-[8px] font-black block mb-1 uppercase tracking-tighter text-nowrap">月產量</span><span id="log-monthly" class="font-black text-blue-600 text-base tracking-tighter">--</span></div>
+                        </div>
+                    </div>
+                    <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-2xl overflow-hidden shadow-inner flex items-center">
+                        <div class="w-full">
+                            <span class="text-amber-800 text-[9px] font-black uppercase block mb-1 tracking-widest italic tracking-wider">歷史異常對策 (History)</span>
+                            <p id="history" class="text-amber-900 text-[10px] font-bold leading-relaxed italic truncate">--</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 數據回報入口 (依照指令放在最底端) -->
+                <div class="bg-gradient-to-r from-blue-700 to-indigo-800 rounded-3xl shadow-lg p-6 text-white overflow-hidden relative group mt-2">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-4 relative z-10">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-white/20 p-3 rounded-2xl backdrop-blur-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-black tracking-tight tracking-tighter">現場數據與照片異常回報</h3>
+                                <p class="text-blue-100 text-xs font-bold opacity-80 uppercase tracking-widest tracking-tighter">Automated link to Google Forms Reporting System</p>
+                            </div>
+                        </div>
+                        <button onclick="reportData()" class="w-full md:w-auto bg-white text-blue-800 px-10 py-3 rounded-2xl font-black text-sm shadow-xl hover:bg-blue-50 active:scale-95 transition-all">
+                            開始線上紀錄
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Lightbox Modal -->
+    <div id="imageModal" class="fixed inset-0 bg-black/95 z-50 hidden flex flex-col items-center justify-center p-4" onclick="closeModal()">
+        <button class="absolute top-6 right-6 text-white bg-white/20 hover:bg-white/40 p-2 rounded-full z-[60]" onclick="closeModal()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+        <div id="modalContent" class="w-full h-full flex items-center justify-center" onclick="event.stopPropagation()"></div>
+        <p class="mt-4 text-white/50 text-[10px] font-bold uppercase tracking-widest italic tracking-widest uppercase">Ruiquan Smart Dashboard - ESC to Close</p>
+    </div>
+
+    <script>
+        /**
+         * 🛠️ Google Form 設定
+         */
+        const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeD-IJiqXe4niSk_kJwEa9scGZpssZ4IxGG3K2D579LMJ8zdQ/viewform";
+        const PART_NO_ENTRY_ID = "entry.1564303156"; 
+
+        /**
+         * 🏆 數據中心：完整 21 個產品 (嚴格依照 841清單-2 順序填入，包含 JPG 與 PDF 映射)
+         */
+        const productData = {
+            'G92D1-VU010': { 
+                moldMaker: "源達", name: "DUCT, HV BATTERY INTAKE", image: "images/G92D1-VU010_main.jpg", customer: "建上/國瑞", machine: "550T (501機)", ct: "52秒", weight: "93g ± 6g", material: "FTP20DY-202B", postProcess: "無", assyTime: "無",
+                controls: [{title: "嵌合點點檢", desc: "五處嵌合點需用蠟筆點檢"}, {title: "填充完整度", desc: "末端缺料處重點目視"}, {title: "定位壓合", desc: "需手動定位後啟動自動壓合"}],
+                sops: [{title: "成形條件表", file: "sop/G92D1-VU010_qc1.pdf"}, {title: "作業標準書", file: "sop/G92D1-VU010_qc2.pdf"}, {title: "檢查手順書", file: "sop/G92D1-VU010_qc3.pdf"}],
+                container: "T62", capacity: "10", monthly: "4166", history: "無重大歷史異常回溯。"
+            },
+            '62511-VU010': { 
+                moldMaker: "源達", name: "右 DECK (後右側背板)", image: "images/62511-vu010_main.jpg", customer: "建上/國瑞", machine: "3200T (321機)", ct: "80", weight: "2430g ± 50g", material: "FTP20DY-202B", postProcess: "無", assyTime: "無",
+                controls: [{title: "表面品質", desc: "大型件禁止表面發白、皮紋拉傷"}],
+                sops: [{title: "成形條件表", file: "sop/62511-VU010_qc1.pdf"}, {title: "作業標準書", file: "sop/62511-VU010_qc2.pdf"}, {title: "檢查手順書", file: "sop/62511-VU010_qc3.pdf"}],
+                container: "台車", capacity: "7", monthly: "4166", history: "注意大型件 A 面皮紋一致性。"
+            },
+            '62512-VU010': { 
+                moldMaker: "源達", name: "左 DECK (後左側背板)", image: "images/62512-vu010_main.jpg", customer: "建上/國瑞", machine: "3200T (321機)", ct: "80", weight: "2480g ± 50g", material: "FTP20DY-202B", postProcess: "無", assyTime: "無",
+                controls: [{title: "表面品質", desc: "大型件禁止表面發白、皮紋拉傷"}],
+                sops: [{title: "成形條件表", file: "sop/62512-VU010_qc1.pdf"}, {title: "作業標準書", file: "sop/62512-VU010_qc2.pdf"}, {title: "檢查手順書", file: "sop/62512-VU010_qc3.pdf"}],
+                container: "台車", capacity: "7", monthly: "4166", history: "注意左右件重量差異對比。"
+            },
+            '67750-VU010': { 
+                moldMaker: "博盛頓", name: "尾門飾板 (BACK DOOR TRIM)", image: "images/67750-vu010_main.jpg", customer: "建上/國瑞", machine: "2700T (312機)", ct: "60", weight: "2040g ± 45g", material: "CN-BP7SYTW", postProcess: "有 (隔音棉)", assyTime: "待填",
+                controls: [{title: "熔接強度", desc: "確認 4 處熔接點無脫落且位置正確"}],
+                sops: [{title: "成形條件表", file: "sop/67750-VU010_qc1.pdf"}, {title: "作業標準書", file: "sop/67750-VU010_qc2.pdf"}, {title: "檢查手順書", file: "sop/67750-VU010_qc3.pdf"}],
+                container: "台車", capacity: "8", monthly: "4166", history: "定期點檢隔音棉熔接機壓力參數。"
+            },
+            '67761-VU010': { 
+                moldMaker: "待填", name: "TRIM, BACK DOOR LOWER", image: "images/67761-VU010_main.jpg", customer: "建上/國瑞", machine: "待填", ct: "待填", weight: "待填", material: "待填", postProcess: "待填", assyTime: "待填",
+                controls: [],
+                sops: [{title: "成形條件表", file: "sop/67761-VU010_qc1.pdf"}, {title: "作業標準書", file: "sop/67761-VU010_qc2.pdf"}, {title: "檢查手順書", file: "sop/67761-VU010_qc3.pdf"}],
+                container: "待填", capacity: "待填", monthly: "4166", history: "數據補錄中。"
+            },
+            '69321-VU010': { 
+                moldMaker: "待填", name: "COVER, LUGGAGE DOOR", image: "images/69321-VU010_main.jpg", customer: "建上/國瑞", machine: "待填", ct: "待填", weight: "待填", material: "待填", postProcess: "待填", assyTime: "待填",
+                controls: [],
+                sops: [{title: "成形條件表", file: "sop/69321-VU010_qc1.pdf"}, {title: "作業標準書", file: "sop/69321-VU010_qc2.pdf"}, {title: "檢查手順書", file: "sop/69321-VU010_qc3.pdf"}],
+                container: "待填", capacity: "待填", monthly: "4166", history: "數據補錄中。"
+            },
+            '81218-X1C00': { 
+                moldMaker: "待填", name: "HOUSING, LUGGAGE LAMP", image: "images/81218-X1C00_main.jpg", customer: "建上/國瑞", machine: "待填", ct: "待填", weight: "待填", material: "待填", postProcess: "待填", assyTime: "待填",
+                controls: [],
+                sops: [{title: "成形條件表", file: "sop/81218-X1C00_qc1.pdf"}, {title: "作業標準書", file: "sop/81218-X1C00_qc2.pdf"}, {title: "檢查手順書", file: "sop/81218-X1C00_qc3.pdf"}],
+                container: "待填", capacity: "待填", monthly: "4166", history: "數據補錄中。"
+            },
+            '55303-VU010': { 
+                moldMaker: "巨達", name: "IP 下段 (INSTRUMENT LOWER)", image: "images/55303-VU010_main.jpg", customer: "建上/國瑞", machine: "2700T (312機)", ct: "待填", weight: "1780g ± 40g", material: "APIP5G-202B", postProcess: "無", assyTime: "無",
+                controls: [],
+                sops: [{title: "成形條件表", file: "sop/55303-VU010_qc1.pdf"}, {title: "作業標準書", file: "sop/55303-VU010_qc2.pdf"}, {title: "檢查手順書", file: "sop/55303-VU010_qc3.pdf"}],
+                container: "台車", capacity: "3", monthly: "4166", history: "注意與儀表上段之嵌合間隙。"
+            },
+            '55514-VU010': { 
+                moldMaker: "祐振", name: "安全氣囊 (RETAINER AIRBAG)", image: "images/55514-VU010_main.jpg", customer: "建上/國瑞", machine: "450T (502機)", ct: "待填", weight: "339g ± 3g", material: "TT935N1J", postProcess: "無", assyTime: "無",
+                controls: [],
+                sops: [{title: "成形條件表", file: "sop/55514-VU010_qc1.pdf"}, {title: "作業標準書", file: "sop/55514-VU010_qc2.pdf"}, {title: "檢查手順書", file: "sop/55514-VU010_qc3.pdf"}],
+                container: "待填", capacity: "6", monthly: "4166", history: "氣囊門噴開測試需定期執行。"
+            },
+            '62225/26-VU010': { 
+                moldMaker: "和成", name: "A 柱下飾板右 (左)", image: "images/62225(6)-VU010_main.jpg", customer: "建上/國瑞", machine: "550T (501機)", ct: "待填", weight: "130g ± 8g", material: "APIP5G-202B", postProcess: "待填", assyTime: "待填",
+                controls: [],
+                sops: [{title: "成形條件表", file: "sop/62225(6)-VU010_qc1.pdf"}, {title: "作業標準書", file: "sop/62225(6)-VU010_qc2.pdf"}, {title: "檢查手順書", file: "sop/62225(6)-VU010_qc3.pdf"}],
+                container: "待填", capacity: "待填", monthly: "4166", history: "左右件不可混裝出貨。"
+            },
+            '62410/20-VU010': { 
+                moldMaker: "祥興", name: "B 柱上飾板右 (左)", image: "images/62410(20)-VU010_main.jpg", customer: "建上/國瑞", machine: "800T (102機)", ct: "待填", weight: "283g ± 16g", material: "APIP5G-202B", postProcess: "待填", assyTime: "待填",
+                controls: [],
+                sops: [{title: "成形條件表", file: "sop/62410(20)-VU010_qc1.pdf"}, {title: "作業標準書", file: "sop/62410(20)-VU010_qc2.pdf"}, {title: "檢查手順書", file: "sop/62410(20)-VU010_qc3.pdf"}],
+                container: "待填", capacity: "待填", monthly: "4166", history: "注意卡扣位置之合模線高度。"
+            },
+            '624511/12-VU010': { 
+                moldMaker: "岡峰", name: "天井側邊飾板右 (左)", image: "images/62451(2)-VU010_main.jpg", customer: "建上/國瑞", machine: "550T (501機)", ct: "待填", weight: "154g ± 6g", material: "CN-BP1TW-202B", postProcess: "待填", assyTime: "待填",
+                controls: [],
+                sops: [{title: "成形條件表", file: "sop/62451(2)-VU010_qc1.pdf"}, {title: "作業標準書", file: "sop/62451(2)-VU010_qc2.pdf"}, {title: "檢查手順書", file: "sop/62451(2)-VU010_qc3.pdf"}],
+                container: "待填", capacity: "7", monthly: "4166", history: "注意天井件包覆之邊緣平整。"
+            },
+            '67917/18-VU010': { 
+                moldMaker: "富項", name: "後門飾板 (左/右)", image: "images/67917(8)-VU010_main.jpg", customer: "建上/國瑞", machine: "800T (102機)", ct: "待填", weight: "655g ± 10g", material: "FTP20DY-202B", postProcess: "待填", assyTime: "待填",
+                controls: [],
+                sops: [{title: "成形條件表", file: "sop/67917(8)-VU010_qc1.pdf"}, {title: "作業標準書", file: "sop/67917(8)-VU010_qc2.pdf"}, {title: "檢查手順書", file: "sop/67917(8)-VU010_qc3.pdf"}],
+                container: "待填", capacity: "待填", monthly: "4166", history: "注意 A 面結合線隱藏效果。"
+            },
+            '71139-VU010': { 
+                moldMaker: "嘉泰", name: "前座腳蓋 (SEAT LEG)", image: "images/71139-vu010_main.jpg", customer: "建上/新三興", machine: "600T (機)", ct: "待填", weight: "548g ± 10g", material: "FTP20DY-202B", postProcess: "待填", assyTime: "待填",
+                controls: [],
+                sops: [{title: "成形條件表", file: "sop/71139-VU010_qc1.pdf"}, {title: "作業標準書", file: "sop/71139-VU010_qc2.pdf"}, {title: "檢查手順書", file: "sop/71139-VU010_qc3.pdf"}],
+                container: "待填", capacity: "6", monthly: "4166", history: "定期檢測卡扣組裝強度。"
+            },
+            '71149-VU010': { 
+                moldMaker: "嘉泰", name: "前座腳蓋 (SEAT LEG)", image: "images/71149-vu010_main.jpg", customer: "建上/新三興", machine: "600T (機)", ct: "待填", weight: "626g ± 15g", material: "FTP20DY-202B", postProcess: "待填", assyTime: "待填",
+                controls: [],
+                sops: [{title: "成形條件表", file: "sop/71149-VU010_qc1.pdf"}, {title: "作業標準書", file: "sop/71149-VU010_qc2.pdf"}, {title: "檢查手順書", file: "sop/71149-VU010_qc3.pdf"}],
+                container: "待填", capacity: "6", monthly: "4166", history: "定期檢測卡扣組裝強度。"
+            },
+            '71861/62-VU010': { 
+                moldMaker: "源達", name: "仰臥器外蓋 (SHIELD)", image: "images/71861(2)-VU010_main.jpg", customer: "建上/新三興", machine: "800T (102機)", ct: "待填", weight: "RH:310g±6g / LH:345g±6g", material: "FTP20PDY-202B", postProcess: "待填", assyTime: "待填",
+                controls: [],
+                sops: [{title: "成形條件表", file: "sop/71861(2)-VU010_qc1.pdf"}, {title: "作業標準書", file: "sop/71861(2)-VU010_qc2.pdf"}, {title: "檢查手順書", file: "sop/71861(2)-VU010_qc3.pdf"}],
+                container: "待填", capacity: "5", monthly: "4166", history: "左右件尺寸對比精度需在 0.2mm 內。"
+            },
+            '76871-VU010': { 
+                moldMaker: "博盛頓", name: "尾翼上蓋 (SPOILER UP)", image: "images/76871-VU010_main.jpg", customer: "建上/國瑞", machine: "2200T (221機)", ct: "待填", weight: "1190g ± 10g", material: "PX18-X02", postProcess: "待填", assyTime: "待填",
+                controls: [],
+                sops: [{title: "成形條件表", file: "sop/76871-VU010_qc1.pdf"}, {title: "作業標準書", file: "sop/76871-VU010_qc2.pdf"}, {title: "檢查手順書", file: "sop/76871-VU010_qc3.pdf"}],
+                container: "待填", capacity: "待填", monthly: "4166", history: "大型外飾件，嚴格監控流痕與縮水。"
+            },
+            '76876-VU010': { 
+                moldMaker: "博盛頓", name: "尾翼下蓋 (SPOILER LOW)", image: "images/76876-VU010_main.jpg", customer: "建上/國瑞", machine: "1500T (152機)", ct: "待填", weight: "1310g ± 10g", material: "TA42C-X01", postProcess: "待填", assyTime: "待填",
+                controls: [],
+                sops: [{title: "成形條件表", file: "sop/76876-VU010_qc1.pdf"}, {title: "作業標準書", file: "sop/76876-VU010_qc2.pdf"}, {title: "檢查手順書", file: "sop/76876-VU010_qc3.pdf"}],
+                container: "待填", capacity: "待填", monthly: "4166", history: "與上蓋之組立間隙需 100% 全檢。"
+            },
+            '76911/12-VU010': { 
+                moldMaker: "待填", name: "擋泥板 (MUDGUARD) RH/LH", image: "images/76911(2)-VU010_main.jpg", customer: "建上/國瑞", machine: "待填", ct: "待填", weight: "待填", material: "待填", postProcess: "待填", assyTime: "待填",
+                controls: [],
+                sops: [{title: "成形條件表", file: "sop/76911(2)-VU010_qc1.pdf"}, {title: "作業標準書", file: "sop/76911(2)-VU010_qc2.pdf"}, {title: "檢查手順書", file: "sop/76911(2)-VU010_qc3.pdf"}],
+                container: "待填", capacity: "待填", monthly: "4166", history: "數據補錄中。"
+            },
+            '76917/18-VU010': { 
+                moldMaker: "待填", name: "後擋泥板 RH/LH", image: "images/76917(8)-VU010_main.jpg", customer: "建上/國瑞", machine: "待填", ct: "待填", weight: "待填", material: "待填", postProcess: "待填", assyTime: "待填",
+                controls: [],
+                sops: [{title: "成形條件表", file: "sop/76917(8)-VU010_qc1.pdf"}, {title: "作業標準書", file: "sop/76917(8)-VU010_qc2.pdf"}, {title: "檢查手順書", file: "sop/76917(8)-VU010_qc3.pdf"}],
+                container: "待填", capacity: "待填", monthly: "4166", history: "數據補錄中。"
+            },
+            '79236/46-VU010': { 
+                moldMaker: "源達", name: "座椅腳蓋系列 RH/LH", image: "images/79236(46)-VU020(010)_main.jpg", customer: "建上/新三興", machine: "800T (102機)", ct: "待填", weight: "202g ± 5g", material: "FTP20DY", postProcess: "待填", assyTime: "待填",
+                controls: [],
+                sops: [{title: "成形條件表", file: "sop/79236(46)-VU020(010)_qc1.pdf"}, {title: "作業標準書", file: "sop/79236(46)-VU020(010)_qc2.pdf"}, {title: "檢查手順書", file: "sop/79236(46)-VU020(010)_qc3.pdf"}],
+                container: "待填", capacity: "6", monthly: "4166", history: "注意與地板毯之密合度。"
+            }
+        };
+
+        // 報表填寫
+        function reportData() {
+            const currentId = document.getElementById('partSelector').value;
+            const prefilledUrl = `${GOOGLE_FORM_URL}?usp=pp_url&${PART_NO_ENTRY_ID}=${encodeURIComponent(currentId)}`;
+            window.open(prefilledUrl, '_blank');
+        }
+
+        // 燈箱控制
+        function openModal(src) {
+            const modal = document.getElementById('imageModal');
+            const content = document.getElementById('modalContent');
+            if (!src) return;
+            const isPdf = src.toLowerCase().endsWith('.pdf');
+            content.innerHTML = isPdf 
+                ? `<iframe src="${src}" class="w-full h-full rounded-2xl bg-white shadow-2xl border-none" type="application/pdf"></iframe>`
+                : `<img src="${src}" class="max-w-full max-h-full rounded-2xl object-contain shadow-2xl">`;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').classList.add('hidden');
+            document.getElementById('modalContent').innerHTML = '';
+            document.body.style.overflow = 'auto';
+        }
+
+        // UI 渲染邏輯
+        function updateUI(id) {
+            const d = productData[id];
+            if (!d) return;
+
+            document.getElementById('main-photo').src = d.image;
+            document.getElementById('part-no').textContent = id;
+            document.getElementById('part-name').textContent = d.name;
+            document.getElementById('customer').textContent = d.customer;
+            document.getElementById('ct').textContent = d.ct + (d.ct !== "待填" ? " 秒" : "");
+            document.getElementById('weight').textContent = d.weight;
+            document.getElementById('material').textContent = d.material;
+            document.getElementById('machine').textContent = d.machine;
+            document.getElementById('log-container').textContent = d.container;
+            document.getElementById('log-cap').textContent = d.capacity + (d.capacity !== "待填" ? " pcs" : "");
+            document.getElementById('log-monthly').textContent = d.monthly;
+            document.getElementById('post-process').textContent = d.postProcess;
+            document.getElementById('assy-time').textContent = d.assyTime;
+            document.getElementById('mold-maker').textContent = `模具: ${d.moldMaker}`;
+            document.getElementById('history').textContent = d.history || "目前無重大異常記錄。";
+
+            // 更新點檢 (區塊 A)
+            const controlsGrid = document.getElementById('controls-grid');
+            controlsGrid.innerHTML = '';
+            if (d.controls && d.controls.length > 0) {
+                d.controls.forEach(ctrl => {
+                    const card = document.createElement('div');
+                    card.className = "border-l-4 border-red-500 bg-red-50/30 p-3 rounded-r-xl border border-slate-100 shadow-sm";
+                    card.innerHTML = `<h4 class="font-black text-slate-800 text-[10px] uppercase mb-1">${ctrl.title}</h4><p class="text-[11px] text-slate-700 font-bold leading-relaxed">${ctrl.desc}</p>`;
+                    controlsGrid.appendChild(card);
+                });
+            } else {
+                controlsGrid.innerHTML = `<div class="text-center text-slate-400 text-xs italic p-4">暫無文字重點</div>`;
+            }
+
+            // 更新文件 (區塊 B)
+            const sopGrid = document.getElementById('sop-grid');
+            sopGrid.innerHTML = '';
+            if (d.sops && d.sops.length > 0) {
+                d.sops.forEach(sop => {
+                    const doc = document.createElement('div');
+                    doc.className = "bg-white border border-slate-100 rounded-2xl p-4 flex items-center gap-4 cursor-pointer hover:bg-blue-600 hover:text-white transition-all group shadow-sm";
+                    doc.onclick = () => openModal(sop.file);
+                    doc.innerHTML = `<div class="bg-blue-50 p-2 rounded-xl text-blue-600 group-hover:bg-white/20 group-hover:text-white transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div><div><h4 class="font-black text-xs text-nowrap">${sop.title}</h4><span class="text-[8px] opacity-60 font-bold uppercase tracking-widest">Open Standard</span></div>`;
+                    sopGrid.appendChild(doc);
+                });
+            } else {
+                sopGrid.innerHTML = `<div class="text-center text-slate-400 text-xs italic p-4">暫無 PDF 文件</div>`;
+            }
+        }
+
+        // 初始化選擇器
+        const selector = document.getElementById('partSelector');
+        Object.keys(productData).forEach(key => {
+            const opt = document.createElement('option');
+            opt.value = key; opt.textContent = `${key} - ${productData[key].name}`;
+            selector.appendChild(opt);
+        });
+
+        selector.addEventListener('change', e => updateUI(e.target.value));
+        updateUI(selector.value);
+
+        // ESC 鍵關閉燈箱
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+    </script>
+</body>
+</html>
